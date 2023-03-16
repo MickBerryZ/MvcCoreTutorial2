@@ -6,7 +6,6 @@ namespace MvcCoreTutorial2.Controllers
     public class PersonController : Controller
     {
         private readonly DatabaseContext _ctx;
-            
         public PersonController(DatabaseContext ctx) 
         {
             _ctx = ctx;
@@ -31,16 +30,17 @@ namespace MvcCoreTutorial2.Controllers
         [HttpPost]
         public IActionResult AddPerson(Person person)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View();
             }
             try
             {
-                _ctx.Add(person);
+                _ctx.Person.Add(person);
                 _ctx.SaveChanges();
                 TempData["msg"] = "Added successfully";
-                return RedirectToAction("AddPerson");
+                return RedirectToAction("DisplayPersons");
+
 
             }
             catch (Exception ex)
@@ -49,5 +49,58 @@ namespace MvcCoreTutorial2.Controllers
                 return View();
             }
         }
+
+        public IActionResult DisplayPersons() 
+        {
+            var persons = _ctx.Person.ToList();
+            return View(persons);   
+        }
+
+        public IActionResult EditPerson(int id)
+        {
+            var person = _ctx.Person.Find(id);
+            return View(person);
+
+        }
+
+        [HttpPost]
+        public IActionResult EditPerson(Person person)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            try
+            {
+                _ctx.Person.Update(person);
+                _ctx.SaveChanges();
+                return RedirectToAction("DisplayPersons");
+
+            }
+            catch (Exception ex)
+            {
+                TempData["msg"] = "Could not update!!!";
+                return View();
+            }
+
+        }
+        public IActionResult DeletePerson(int id)
+        {
+            try
+            {
+                var person = _ctx.Person.Find(id);
+                if (person != null)
+                {
+                    _ctx.Person.Remove(person);
+                    _ctx.SaveChanges();
+                }
+            }
+            catch (Exception)
+            {
+                //throw;
+            }
+            return RedirectToAction("DisplayPersons");
+        }
+
     }
 }

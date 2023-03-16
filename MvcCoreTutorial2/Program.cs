@@ -30,6 +30,6 @@ app.UseAuthorization();
 // it is default URL
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Person}/{action=AddPerson}/{id?}");
+    pattern: "{controller=Person}/{action=DisplayPersons}/{id?}");
 
 app.Run();
